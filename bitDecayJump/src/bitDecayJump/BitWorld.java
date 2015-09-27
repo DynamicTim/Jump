@@ -2,6 +2,8 @@ package bitDecayJump;
 
 import java.util.*;
 
+import bitDecayJump.collision.ClassicStrategy;
+import bitDecayJump.collision.SATStrategy;
 import bitDecayJump.geom.*;
 import bitDecayJump.level.*;
 
@@ -32,8 +34,8 @@ public class BitWorld {
 	private Map<Integer, Map<Integer, Set<BitBody>>> occupiedSpaces;
 	private Map<BitBody, BitResolution> pendingResolutions;
 
-	protected static BitPoint gravity = new BitPoint(0, 0);
-	protected static BitPoint maxSpeed = new BitPoint(2000, 2000);
+	public static BitPoint gravity = new BitPoint(0, 0);
+	public static BitPoint maxSpeed = new BitPoint(2000, 2000);
 
 	private List<BitBody> pendingAdds;
 	private List<BitBody> pendingRemoves;
@@ -141,13 +143,14 @@ public class BitWorld {
 							child.aabb.translate(influence);
 							// the child did attempt to move this additional amount according to our engine
 							child.lastAttempt.add(influence);
-							child.parent = null;
 						}
 						body.children.clear();
 					}
 				}
 				// all bodies are assumed to be not grounded unless a collision happens this step.
 				body.grounded = false;
+				// all bodies are assumed to be independent unless a lineage collision happens
+				body.parent = null;
 			}
 		});
 
@@ -170,7 +173,7 @@ public class BitWorld {
 
 	private void resolveAndApplyPendingResolutions() {
 		for (BitBody body : pendingResolutions.keySet()) {
-			pendingResolutions.get(body).satisfy();
+			pendingResolutions.get(body).resolve();
 			applyResolution(body, pendingResolutions.get(body));
 		}
 		pendingResolutions.clear();
@@ -259,7 +262,7 @@ public class BitWorld {
 		BitRectangle insec = GeomUtils.intersection(body.aabb, against.aabb);
 		if (insec != null) {
 			if (!pendingResolutions.containsKey(body)) {
-				pendingResolutions.put(body, new BitResolution(body));
+				pendingResolutions.put(body, new SATStrategy(body));
 			}
 			BitResolution resolution = pendingResolutions.get(body);
 			//TODO: This can definitely be made more efficient via a hash map or something of the like

@@ -33,7 +33,7 @@ public class JumperStateWatcher extends AbstractStateWatcher {
 			}
 		}
 		if (!newState.equals(state)) {
-			//			System.out.println(newState);
+			System.out.println(newState);
 			state = newState;
 			fireListeners(state);
 		}

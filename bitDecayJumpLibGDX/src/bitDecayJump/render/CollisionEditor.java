@@ -16,6 +16,7 @@ import com.badlogic.gdx.math.Vector3;
 public class CollisionEditor extends InputAdapter implements Screen {
 
     private static final int CAM_SPEED = 5;
+    public static final double PI_OVER_TWO = Math.PI / 2;
 
     public BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/test2.fnt"), Gdx.files.internal("fonts/test2.png"), false);
 
@@ -50,8 +51,8 @@ public class CollisionEditor extends InputAdapter implements Screen {
         camera = new OrthographicCamera(1600, 900);
         setCamToOrigin();
 
-        r1 = new BitSATRectangle(0, 0, 5, 5);
-        r2 = new BitSATRectangle(9, 2, 5, 5);
+        r1 = new BitSATRectangle(-4.95f, 0, 5, 5);
+        r2 = new BitSATRectangle(10, -15, 10, 10);
         t1 = new BitTriangle(20,-5, 20, 5);
         t2 = new BitTriangle(20,-5, -5, 20);
     }
@@ -115,52 +116,67 @@ public class CollisionEditor extends InputAdapter implements Screen {
         spriteBatch.setColor(1, 1, 1, .3f);
         spriteBatch.end();
 
+        shaper.setColor(Color.GREEN);
         SATResolution reso = SATCollisions.getCollision(r1, t1);
         if (reso != null) {
             resolve(reso);
+            shaper.setColor(Color.RED);
         }
 
         reso = SATCollisions.getCollision(r1, t2);
         if (reso != null) {
             resolve(reso);
-            shaper.begin(ShapeType.Line);
             shaper.setColor(Color.RED);
-        } else {
-            shaper.begin(ShapeType.Line);
-            shaper.setColor(Color.GREEN);
+        }
+
+        reso = SATCollisions.getCollision(r1, r2);
+        if (reso != null) {
+            resolve(reso);
+            shaper.setColor(Color.RED);
         }
 
 
+
+
+        shaper.begin(ShapeType.Line);
         shaper.rect(r1.xy.x - r1.halfWidth, r1.xy.y - r1.halfHeight, r1.halfWidth * 2, r1.halfHeight * 2);
-//        shaper.rect(r2.xy.x - r2.halfWidth, r2.xy.y - r2.halfHeight, r2.halfWidth * 2, r2.halfHeight * 2);
+        shaper.rect(r2.xy.x - r2.halfWidth, r2.xy.y - r2.halfHeight, r2.halfWidth * 2, r2.halfHeight * 2);
         shaper.triangle(t1.rightAngle.x, t1.rightAngle.y, t1.rightAngle.x, t1.rightAngle.y + t1.height, t1.rightAngle.x + t1.width, t1.rightAngle.y);
         shaper.triangle(t2.rightAngle.x, t2.rightAngle.y, t2.rightAngle.x, t2.rightAngle.y + t2.height, t2.rightAngle.x + t2.width, t2.rightAngle.y);
         shaper.end();
     }
 
     private void resolve(SATResolution reso) {
+        System.out.println();
         System.out.println("reso: " + reso);
 
         if (reso.axis.x != 0 && reso.axis.y > 0) {
             // this is logic to make it so the player doesn't move slower when running uphill. Likewise, we will need logic to 'glue' the player to the ground when running downhill.
+            // atan is our angle of resolution
             double atan = Math.atan(reso.axis.y / reso.axis.x);
             System.out.println("atan: " + atan);
-            if (atan > 0) {
-                double angleToUpright;
-                angleToUpright = Math.PI / 2 - atan;
-                System.out.println("Ang to Up: " + angleToUpright);
-                double straightUp = reso.distance / Math.cos(angleToUpright);
-                r1.xy.add(0, (float) straightUp);
-            } else {
-                double angleToUpright;
-                angleToUpright = -(Math.PI / 2) - atan;
-                System.out.println("Ang to Up: " + angleToUpright);
-                double straightUp = reso.distance / Math.cos(angleToUpright);
-                r1.xy.add(0, (float) straightUp);
+
+            if (Math.abs(atan - PI_OVER_TWO) <= Math.toRadians(30)) {
+                // currently we impose a hard limit of 30 degree angle 'walkability'
+                if (atan > 0) {
+                    double angleToUpright;
+                    angleToUpright = PI_OVER_TWO - atan;
+                    System.out.println("Ang to Up: " + angleToUpright);
+                    double straightUp = reso.distance / Math.cos(angleToUpright);
+                    r1.xy.add(0, (float) straightUp);
+                } else {
+                    double angleToUpright;
+                    angleToUpright = -PI_OVER_TWO - atan;
+                    System.out.println("Ang to Up: " + angleToUpright);
+                    double straightUp = reso.distance / Math.cos(angleToUpright);
+                    r1.xy.add(0, (float) straightUp);
+                }
+                return;
             }
-        } else {
-            r1.xy.add(reso.axis.x * reso.distance, reso.axis.y * reso.distance);
         }
+
+        r1.xy.add(reso.axis.x * reso.distance, reso.axis.y * reso.distance);
+
     }
 
     private void drawGrid() {
@@ -199,9 +215,9 @@ public class CollisionEditor extends InputAdapter implements Screen {
             r1.xy.x += .1f;
         }
         if (Gdx.input.isKeyPressed(Keys.W)) {
-            r1.xy.y += .1f;
+            r1.xy.y += 5f;
         } else if (Gdx.input.isKeyPressed(Keys.S)) {
-            r1.xy.y -= .1f;
+            r1.xy.y -= 5f;
         }
 
         if (Gdx.input.isKeyPressed(Keys.LEFT)) {

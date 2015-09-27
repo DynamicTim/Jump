@@ -3,6 +3,7 @@ package bitDecayJump.geom;
 public class MathUtils {
 	public static final float FLOAT_PRECISION = .0001f;
 	public static final float COLLISION_PRECISION = .02f;
+	public static final float PI_OVER_TWO = (float) (Math.PI / 2);
 
 	public static BitPoint normalize(BitPoint xy) {
 		return xy.dividedBy((float) Math.sqrt(Math.pow(xy.x, 2) + Math.pow(xy.y, 2)));

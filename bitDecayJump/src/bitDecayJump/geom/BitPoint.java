@@ -169,13 +169,13 @@ public class BitPoint {
 		if (result.x > 0) {
 			result.x = Math.max(0, x - amount);
 		} else if (result.x < 0) {
-			result.x = Math.max(0, x = amount);
+			result.x = Math.min(0, x + amount);
 		}
 
 		if (result.y > 0) {
 			result.y = Math.max(0, y - amount);
 		} else if (result.y < 0) {
-			result.y = Math.max(0, y = amount);
+			result.y = Math.min(0, y + amount);
 		}
 		return result;
 	}

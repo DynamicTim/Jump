@@ -10,6 +10,12 @@ import java.util.*;
  */
 public class SATCollisions {
 
+    /**
+     * Builds a resolution to move p1 out of p2 if necessary
+     * @param p1 the shape to be resolved
+     * @param p2 the shape to resolve against
+     * @return the resolution strategy, or null if the shapes do not overlap
+     */
     public static SATResolution getCollision(Projectable p1, Projectable p2) {
         BitPoint[] points1 = p1.getProjectionPoints();
         BitPoint[] points2 = p2.getProjectionPoints();
@@ -39,7 +45,6 @@ public class SATCollisions {
         if (res != null) {
             // normalize our data so the resolution is always a positive vector
             if (res.distance < 0) {
-                System.out.println("Normalizing " + res);
                 res.distance *= -1;
                 res.axis.x *= -1;
                 res.axis.y *= -1;

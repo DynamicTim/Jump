@@ -1,6 +1,6 @@
 package bitDecayJump.geom;
 
-public class BitRectangle {
+public class BitRectangle implements Projectable{
 	public BitPoint xy;
 	public float width;
 	public float height;
@@ -104,5 +104,10 @@ public class BitRectangle {
 	@Override
 	public String toString() {
 		return "(x: " + xy.x + ", y: " + xy.y + " - w: " + width + ", h: " + height + ")";
+	}
+
+	@Override
+	public BitPoint[] getProjectionPoints() {
+		return new BitPoint[] {xy,  xy.plus(width, 0), xy.plus(width, height), xy.plus(0, height)};
 	}
 }

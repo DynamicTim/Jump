@@ -330,6 +330,8 @@ public class LevelEditor extends InputAdapter implements Screen, OptionsUICallba
 				camera.zoom -= .2f;
 			} else if (camera.zoom > .2) {
 				camera.zoom -= .05f;
+			} else if (camera.zoom > .001f) {
+				camera.zoom -= .001;
 			}
 		} else if (Gdx.input.isKeyPressed(Keys.NUM_1)) {
 			if (camera.zoom < 5) {
