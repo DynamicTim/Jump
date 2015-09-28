@@ -1,11 +1,12 @@
 package com.bitdecay.jump;
 
-import java.util.*;
-
 import com.bitdecay.jump.collision.SATStrategy;
 import com.bitdecay.jump.geom.*;
 import com.bitdecay.jump.level.Level;
 import com.bitdecay.jump.level.TileObject;
+import com.bitdecay.jump.listener.BitCollisionListener;
+
+import java.util.*;
 
 /**
  * A Pseudo-Physics simulation world. Will step according to all body's
@@ -42,6 +43,10 @@ public class BitWorld {
 	private List<BitBody> pendingRemoves;
 	public final List<BitRectangle> resolvedCollisions = new ArrayList<BitRectangle>();
 	public final List<BitRectangle> unresolvedCollisions = new ArrayList<BitRectangle>();
+
+    private List<BitBody> aGroupCollisions = new ArrayList<>();
+    private List<BitBody> bGroupCollisions = new ArrayList<>();
+    private List<BitCollisionListener> listeners = new ArrayList<>();
 
 	public static final BitBody LEVEL_BODY = new BitBody();
 	static {
@@ -177,6 +182,15 @@ public class BitWorld {
 			applyResolution(body, pendingResolutions.get(body));
 		}
 		pendingResolutions.clear();
+
+
+        // notify listeners after resolution is reached for all the bodies
+        for (int i = 0; i < aGroupCollisions.size(); i++) {
+            final int index = i;
+            listeners.stream().forEach(listener -> listener.collision(aGroupCollisions.get(index), bGroupCollisions.get(index)));
+        }
+        aGroupCollisions.clear();
+        bGroupCollisions.clear();
 	}
 
 	private void buildKineticCollections(BitBody kineticBody) {
@@ -272,6 +286,8 @@ public class BitWorld {
 				}
 			}
 			resolution.collisions.add(new BitCollision(insec, against));
+            aGroupCollisions.add(body);
+            aGroupCollisions.add(against);
 		}
 	}
 
@@ -329,4 +345,12 @@ public class BitWorld {
 		pendingRemoves.addAll(bodies);
 		pendingAdds.clear();
 	}
+
+    public void addCollisionListener(BitCollisionListener listener){
+        listeners.add(listener);
+    }
+
+    public void removeCollisionListener(BitCollisionListener listener){
+        listeners.remove(listener);
+    }
 }

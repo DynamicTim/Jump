@@ -3,6 +3,7 @@ package com.bitdecay.jump;
 import com.bitdecay.jump.geom.BitPointInt;
 import com.bitdecay.jump.geom.BitRectangle;
 import com.bitdecay.jump.level.Level;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class TestCollisions {
@@ -17,7 +18,7 @@ public class TestCollisions {
 
         BitBody staticBody = new BitBody();
         staticBody.bodyType = BodyType.STATIC;
-        staticBody.aabb = new BitRectangle(0, 0, 10, 10);
+        staticBody.aabb = new BitRectangle(-50, 0, 100, 1);
         world.addBody(staticBody);
 
         BitBody dynamicBody = new BitBody();
@@ -25,12 +26,33 @@ public class TestCollisions {
         dynamicBody.aabb = new BitRectangle(0, 20, 10, 10);
         world.addBody(dynamicBody);
 
-        // TODO: figure out how to listen to collisions
+        final CollisionHelper c = new CollisionHelper();
+        // listen to collisions
+        world.addCollisionListener((a, b) -> {
+            c.a = a;
+            c.b = b;
+        });
 
-        for (int i = 0; i < 1000; i++){
+        for (int i = 0; i < 100; i++){
             world.step(0.1f);
         }
 
-        // TODO: assert that the collision happened
+        Assert.assertTrue("Dynamic body should have moved down from its original y point", dynamicBody.aabb.xy.y < 20);
+        Assert.assertTrue("Dynamic body should not have moved past the static body's y point " + dynamicBody.aabb, dynamicBody.aabb.xy.y > 0);
+
+        Assert.assertNotNull("The collision should have happened between the static and dynamic bodies", c.a);
+    }
+
+    public class CollisionHelper {
+        public BitBody a;
+        public BitBody b;
+        public CollisionHelper(){
+            this.a = null;
+            this.b = null;
+        }
+        public CollisionHelper(BitBody a, BitBody b){
+            this.a = a;
+            this.b = b;
+        }
     }
 }
