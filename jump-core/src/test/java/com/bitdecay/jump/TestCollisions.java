@@ -44,15 +44,7 @@ public class TestCollisions {
     }
 
     public class CollisionHelper {
-        public BitBody a;
-        public BitBody b;
-        public CollisionHelper(){
-            this.a = null;
-            this.b = null;
-        }
-        public CollisionHelper(BitBody a, BitBody b){
-            this.a = a;
-            this.b = b;
-        }
+        public BitBody a = null;
+        public BitBody b = null;
     }
 }
