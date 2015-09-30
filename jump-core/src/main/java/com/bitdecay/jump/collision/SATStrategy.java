@@ -15,7 +15,6 @@ public class SATStrategy extends BitResolution {
 
     @Override
     public void satisfy(BitWorld world) {
-        System.out.println("Satisfying shiz");
         for (BitCollision collision : collisions) {
             SATResolution satRes = SATCollisions.getCollision(resolvedPosition, collision.otherBody.aabb);
             if (collision.otherBody.refined != null) {
