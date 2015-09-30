@@ -78,13 +78,24 @@ public class LevelBuilder {
 		}
 	}
 
+	public void createSlopeLevelObject(BitPointInt startPoint, BitPointInt endPoint) {
+		createLevelObject(startPoint, endPoint, true);
+	}
+
 	public void createLevelObject(BitPointInt startPoint, BitPointInt endPoint) {
+		createLevelObject(startPoint, endPoint, false);
+	}
+
+	public void createLevelObject(BitPointInt startPoint, BitPointInt endPoint, boolean hack) {
 		List<LevelObject> newObjects = new ArrayList<LevelObject>();
 
-		BitPointInt objCell = new BitPointInt(0, 0);
+		BitPointInt objCell = null;
 		boolean resize = false;
 		for (BitRectangle rect : GeomUtils.split(GeomUtils.makeRect(startPoint, endPoint), tileSize, tileSize)) {
 			TileObject obj = new TileObject(rect);
+			if (hack) {
+				obj = new TileSlopeObject(rect);
+			}
 
 			objCell = getOccupiedCell(obj);
 			while (!ArrayUtilities.onGrid(grid, objCell.x, objCell.y)) {

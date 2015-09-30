@@ -15,8 +15,12 @@ public class SATStrategy extends BitResolution {
 
     @Override
     public void satisfy(BitWorld world) {
+        System.out.println("Satisfying shiz");
         for (BitCollision collision : collisions) {
             SATResolution satRes = SATCollisions.getCollision(resolvedPosition, collision.otherBody.aabb);
+            if (collision.otherBody.refined != null) {
+                satRes = SATCollisions.getCollision(resolvedPosition, collision.otherBody.refined);
+            }
             if (satRes != null) {
                 satResolve(resolvedPosition, satRes);
                 postResolve(world, body, collision.otherBody, satRes);
@@ -30,7 +34,7 @@ public class SATStrategy extends BitResolution {
             // atan is our angle of resolution
             double atan = Math.atan(satRes.axis.y / satRes.axis.x);
 
-            if (Math.abs(atan - MathUtils.PI_OVER_TWO) <= Math.toRadians(30)) {
+            if (Math.abs(atan - MathUtils.PI_OVER_TWO) <= Math.toRadians(54)) {
                 // currently we impose a hard limit of 30 degree angle 'walkability'
                 if (atan > 0) {
                     double angleToUpright;

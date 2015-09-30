@@ -134,6 +134,7 @@ public class LevelEditor extends InputAdapter implements Screen, OptionsUICallba
         mouseModes = new HashMap<OptionsMode, MouseMode>();
         mouseModes.put(OptionsMode.SELECT, new SelectMouseMode(curLevelBuilder));
         mouseModes.put(OptionsMode.CREATE, new CreateMouseMode(curLevelBuilder));
+        mouseModes.put(OptionsMode.ANGLE, new AngleMouseMode(curLevelBuilder));
         mouseModes.put(OptionsMode.MOVING_PLATFORM, new MovingPlatformMouseMode(curLevelBuilder));
         mouseModes.put(OptionsMode.DELETE, new DeleteMouseMode(curLevelBuilder));
         mouseModes.put(OptionsMode.SET_SPAWN, new SpawnMouseMode(curLevelBuilder));

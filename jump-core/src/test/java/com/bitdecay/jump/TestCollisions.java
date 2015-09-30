@@ -16,13 +16,14 @@ public class TestCollisions {
         world.setGravity(0, -1);
 
         BitBody staticBody = new BitBody();
-        staticBody.bodyType = BodyType.STATIC;
+        staticBody.bodyType = BodyType.KINETIC;
         staticBody.aabb = new BitRectangle(0, 0, 10, 10);
         world.addBody(staticBody);
 
         BitBody dynamicBody = new BitBody();
         dynamicBody.bodyType = BodyType.DYNAMIC;
         dynamicBody.aabb = new BitRectangle(0, 20, 10, 10);
+        dynamicBody.gravitational = true;
         world.addBody(dynamicBody);
 
         // TODO: figure out how to listen to collisions

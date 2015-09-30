@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.glutils.*;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.bitdecay.jump.BitBody;
 import com.bitdecay.jump.BitWorld;
+import com.bitdecay.jump.geom.BitPoint;
 import com.bitdecay.jump.geom.BitRectangle;
 import com.bitdecay.jump.geom.GeomUtils;
 import com.bitdecay.jump.level.Direction;
@@ -36,6 +37,16 @@ public class LibGDXWorldRenderer implements BitWorldRenderer {
                     BitBody levelObject = column[y];
                     if (GeomUtils.intersection(view, levelObject.aabb) == null) {
                         // don't even attempt to draw if not on camera
+                        continue;
+                    }
+                    if (levelObject.refined != null) {
+                        BitPoint[] projectionPoints = levelObject.refined.getProjectionPoints();
+                        float[] floats = new float[projectionPoints.length * 2];
+                        for (int i = 0; i < projectionPoints.length; i++) {
+                            floats[i*2] = projectionPoints[i].x;
+                            floats[i*2+1] = projectionPoints[i].y;
+                        }
+                        renderer.polygon(floats);
                         continue;
                     }
                     float leftX = levelObject.aabb.xy.x;

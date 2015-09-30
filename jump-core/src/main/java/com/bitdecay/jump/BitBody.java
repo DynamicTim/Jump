@@ -4,6 +4,7 @@ import com.bitdecay.jump.controller.BitBodyController;
 import com.bitdecay.jump.exception.BitBodySerializeException;
 import com.bitdecay.jump.geom.BitPoint;
 import com.bitdecay.jump.geom.BitRectangle;
+import com.bitdecay.jump.geom.Projectable;
 import com.bitdecay.jump.state.BitBodyStateWatcher;
 
 import java.util.HashSet;
@@ -14,6 +15,12 @@ public class BitBody {
      * Contains the position and size data for this body
      */
 	public BitRectangle aabb = new BitRectangle(1, 1, 1, 1);
+
+    /**
+     * Contains a more specific shape we can use for the body. This shape should
+     * be contained within the aabb.
+     */
+    public Projectable refined = null;
 
     /**
      * Reference to the optional parent object
